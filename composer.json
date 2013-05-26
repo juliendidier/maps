@@ -1,0 +1,18 @@
+{
+    "require": {
+        "php":                ">=5.4",
+        "silex/silex":        "dev-master",
+        "monolog/monolog":    ">=1.0.0",
+        "symfony/finder":     "2.1.*",
+        "symfony/yaml":       "2.1.*",
+        "pimple/pimple":      "1.0.*",
+        "kriswallsmith/buzz": "0.*",
+        "predis/predis":      "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Geocoder": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
