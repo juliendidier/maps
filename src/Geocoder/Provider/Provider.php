@@ -18,9 +18,9 @@ class Provider
 
     public function geocode($address)
     {
-        // if ($this->cache->hasGeocode($address)) {
-        //     return $this->cache->getGeocode($address);
-        // }
+        if ($this->cache->hasGeocode($address)) {
+            return $this->cache->getGeocode($address);
+        }
 
         $geocode = $this->browser->getGeocode($address);
         $this->cache->setGeocode($address, $geocode);
