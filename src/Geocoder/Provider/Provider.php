@@ -16,6 +16,18 @@ class Provider
         $this->cache    = $cache;
     }
 
+    public function geocode($address)
+    {
+        // if ($this->cache->hasGeocode($address)) {
+        //     return $this->cache->getGeocode($address);
+        // }
+
+        $geocode = $this->browser->getGeocode($address);
+        $this->cache->setGeocode($address, $geocode);
+
+        return $geocode;
+    }
+
     public function reverse($latitude, $longitude)
     {
         if ($this->cache->hasReverse($latitude, $longitude)) {
