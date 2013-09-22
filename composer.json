@@ -1,18 +1,21 @@
 {
+    "name": "juliendidier/geocoder",
+    "description": "GoogleMaps API",
+    "license": "MIT",
     "require": {
-        "php":                ">=5.4",
-        "silex/silex":        "dev-master",
-        "monolog/monolog":    ">=1.0.0",
-        "symfony/finder":     "2.1.*",
-        "symfony/yaml":       "2.1.*",
-        "pimple/pimple":      "1.0.*",
+        "php": ">=5.4",
+        "silex/silex": "1.1.*@dev",
+        "monolog/monolog": ">=1.0.0",
+        "symfony/finder": "2.1.*",
+        "symfony/yaml": "2.1.*",
+        "pimple/pimple": "1.0.*",
         "kriswallsmith/buzz": "0.*",
-        "predis/predis":      "dev-master"
+        "predis/predis": "0.8.*@dev"
     },
     "autoload": {
         "psr-0": {
             "Geocoder": "src/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }

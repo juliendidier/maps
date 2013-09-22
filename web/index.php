@@ -2,7 +2,6 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

@@ -20,7 +20,6 @@ class Browser extends BaseBrowser
         $response = $this->get($url);
 
         if (!$response->isSuccessful()) {
-            die(var_dump($response->getContent()));
             throw new \Exception(sprintf('Failed to communicate with google maps apis (%d)', $response->getStatusCode()));
         }
 
