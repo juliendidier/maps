@@ -28,12 +28,24 @@ $app->get('/reverse', function (Request $request) use ($app) {
     $longitude = $request->query->get('longitude', '');
 
     if ($latitude === '' || $longitude === '') {
-        throw new BadRequestHttpException("Latitude or longitude are missing");
+        throw new BadRequestHttpException("Latitude (latitude) or longitude (longitude) are missing");
     }
 
     $result = $app['maps.provider']->reverse($latitude, $longitude);
 
     return new Response(json_encode($result, true));
 })->bind('reverse');
+
+$app->get('/search', function (Request $request) use ($app) {
+    $q = $request->query->get('q', '');
+
+    if ($q === '') {
+        throw new BadRequestHttpException("Query (q) is missing");
+    }
+
+    $result = $app['maps.provider']->search($q);
+
+    return new Response(json_encode($result, true));
+})->bind('search');
 
 $app->run();

@@ -30,13 +30,18 @@ class Provider
 
     public function reverse($latitude, $longitude)
     {
-        if ($this->cache->hasReverse($latitude, $longitude)) {
-            return $this->cache->getReverse($latitude, $longitude);
-        }
+        // if ($this->cache->hasReverse($latitude, $longitude)) {
+        //     return $this->cache->getReverse($latitude, $longitude);
+        // }
 
         $reverse = $this->browser->getReverse($latitude, $longitude);
         $this->cache->setReverse($latitude, $longitude, $reverse);
 
         return $reverse;
+    }
+
+    public function search($q)
+    {
+        return $this->browser->getSearch($q);
     }
 }

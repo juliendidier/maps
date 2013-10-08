@@ -8,6 +8,7 @@ use Geocoder\Provider\Provider;
 use Silex\Application as SilexApplication;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
+use Buzz\Client\Curl;
 
 class Application extends SilexApplication
 {
@@ -43,7 +44,7 @@ class Application extends SilexApplication
         };
 
         $this['buzz.browser'] = function ($app) {
-            $browser = new Buzz\Browser();
+            $browser = new Buzz\Browser(new Curl());
             $browser->setApiKey($app['config']['maps']['apiKey']);
 
             return $browser;

@@ -2,9 +2,9 @@
 
 namespace Geocoder\Buzz;
 
-use Buzz\Browser as BaseBrowser;
+use Buzz\Browser as BuzzBrowser;
 
-class Browser extends BaseBrowser
+class Browser extends BuzzBrowser
 {
     protected $apiKey = null;
 
@@ -15,19 +15,9 @@ class Browser extends BaseBrowser
 
     public function getGeocode($address)
     {
-        $address  = urlencode($address);
-        $url      = 'http://maps.googleapis.com/maps/api/geocode/json?address='.$address.'&sensor=false&key='.$this->apiKey;
-        $response = $this->get($url);
-
-        if (!$response->isSuccessful()) {
-            throw new \Exception(sprintf('Failed to communicate with google maps apis (%d)', $response->getStatusCode()));
-        }
-
-        $content  = json_decode($response->getContent(), true);
-
-        if (array_key_exists('status', $content) && $content['status'] === 'REQUEST_DENIED') {
-            throw new \Exception("Google maps apis says REQUEST_DENIED");
-        }
+        $address = urlencode($address);
+        $url = 'https://maps.googleapis.com/maps/api/geocode/json?address='.$address.'&sensor=false';
+        $content = $this->getJson($url);
 
         $result = array(
             'location'  => $content['results'][0]['geometry']['location'],
@@ -53,19 +43,35 @@ class Browser extends BaseBrowser
 
     public function getReverse($latitude, $longitude)
     {
-        $url      = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='.$latitude.','.$longitude.'&sensor=false&key='.$this->apiKey;
-        $response = $this->get($url);
+        $url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='.$latitude.','.$longitude.'&sensor=false';
+        $content = $this->getJson($url);
 
+        return $content['results'];
+    }
+
+    public function getSearch($q)
+    {
+        $q = urlencode($q);
+        // $url = 'https://maps.googleapis.com/maps/api/autocomplete/json?input='.$q.'&types=geocode&language=fr&sensor=false&key='.$this->apiKey;
+        $url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?input=Vict&sensor=true&key=".$this->apiKey;
+        $content = $this->getJson($url);
+
+die(var_dump($content));
+        return $content['results'];
+    }
+
+    public function getJson($url, $headers = array())
+    {
+        $response = $this->get($url);
+die();
         if (!$response->isSuccessful()) {
             throw new \Exception("Failed to communicate with google maps apis");
         }
 
-        $content  = json_decode($response->getContent(), true);
-
         if (array_key_exists('status', $content) && $content['status'] === 'REQUEST_DENIED') {
-            throw new \Exception("Google maps apis says REQUEST_DENIED");
+            throw new \Exception(sprintf('Google maps apis says %s', $content['status']));
         }
 
-        return $content['results'];
+        return json_decode($response->getContent(), true);
     }
 }
