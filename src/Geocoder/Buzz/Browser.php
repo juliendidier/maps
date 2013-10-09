@@ -43,7 +43,7 @@ class Browser extends BuzzBrowser
 
     public function getReverse($latitude, $longitude)
     {
-        $url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='.$latitude.','.$longitude.'&sensor=false';
+        $url = 'https://maps.googleapis.com/maps/api/geocode/json?language=fr&latlng='.$latitude.','.$longitude.'&sensor=false';
         $content = $this->getJson($url);
 
         return $content['results'];
@@ -53,7 +53,7 @@ class Browser extends BuzzBrowser
     {
         $q = urlencode($q);
         // $url = 'https://maps.googleapis.com/maps/api/autocomplete/json?input='.$q.'&types=geocode&language=fr&sensor=false&key='.$this->apiKey;
-        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=".$q."&sensor=false";
+        $url = "https://maps.googleapis.com/maps/api/geocode/json?language=fr&address=".$q."&sensor=false";
         $content = $this->getJson($url);
 
         $autocomplete = [];
