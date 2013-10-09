@@ -2,6 +2,7 @@
 
 namespace Geocoder\Cache;
 
+use Geocoder\Cache\Exception\NotCachedException;
 use Predis\Client;
 
 class Cache
@@ -13,51 +14,66 @@ class Cache
         $this->client = $client;
     }
 
-    public function hasGeocode($address)
-    {
-        return $this->client->exists($this->getGeocodeKey($address));
-    }
-
     public function getGeocode($address)
     {
-        if (!$this->hasGeocode($address)) {
-            throw new \LogicException(sprintf('No cache for reverse "%f,%f', $address));
+        $key = $this->getGeocodeKey($address);
+
+        if (!$this->client->exists($key)) {
+            throw new NotCachedException(sprintf('No cache for reverse "%s', $address));
         }
 
-        return json_decode($this->client->get($this->getGeocodeKey($address)), true);
+        return unserialize($this->client->get($key));
     }
 
-    public function setGeocode($address, array $data)
+    public function setGeocode($address, $data)
     {
-        $this->client->set($this->getGeocodeKey($address), json_encode($data, true));
-    }
-
-    public function hasReverse($latitude, $longitude)
-    {
-        return $this->client->exists($this->getReverseKey($latitude, $longitude));
+        $this->client->set($this->getGeocodeKey($address), serialize($data));
     }
 
     public function getReverse($latitude, $longitude)
     {
-        if (!$this->hasReverse($latitude, $longitude)) {
-            throw new \LogicException(sprintf('No cache for reverse "%f,%f', $latitude, $longitude));
+        $key = $this->getReverseKey($latitude, $longitude);
+
+        if (!$this->client->exists($key)) {
+            throw new NotCachedException(sprintf('No cache for reverse "%f,%f', $latitude, $longitude));
         }
 
-        return json_decode($this->client->get($this->getReverseKey($latitude, $longitude)), true);
+        return unserialize($this->client->get($key));
     }
 
-    public function setReverse($latitude, $longitude, array $data)
+    public function setReverse($latitude, $longitude, $data)
     {
-        $this->client->set($this->getReverseKey($latitude, $longitude), json_encode($data, true));
+        $this->client->set($this->getReverseKey($latitude, $longitude), serialize($data));
+    }
+
+    public function getSearch($q)
+    {
+        $key = $this->getSearchKey($q);
+
+        if (!$this->client->exists($key)) {
+            throw new NotCachedException(sprintf('No cache for search "%s', $q));
+        }
+
+        return unserialize($this->client->get($key));
+    }
+
+    public function setSearch($q, $data)
+    {
+        $this->client->set($this->getSearchKey($q), serialize($data));
     }
 
     protected function getReverseKey($latitude, $longitude)
     {
-        return 'reverse_'.md5('lat'.$latitude.'lng'.$longitude);
+        return 'reverse_'.md5(sprintf('lat%flng%f', $latitude, $longitude));
     }
 
     protected function getGeocodeKey($address)
     {
-        return 'geocode_'.md5('addr'.$address);
+        return 'geocode_'.md5(sprintf('addr%s', $address));
+    }
+
+    protected function getSearchKey($q)
+    {
+        return 'search_'.md5(sprintf('q%s', $q));
     }
 }
