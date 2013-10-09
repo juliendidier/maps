@@ -16,7 +16,7 @@ class Browser extends BuzzBrowser
     public function getGeocode($address)
     {
         $address = urlencode($address);
-        $url = 'https://maps.googleapis.com/maps/api/geocode/json?address='.$address.'&sensor=false';
+        $url = 'https://maps.googleapis.com/maps/api/geocode/json?language=fr&address='.$address.'&sensor=false';
         $content = $this->getJson($url);
 
         $result = array(
@@ -53,17 +53,21 @@ class Browser extends BuzzBrowser
     {
         $q = urlencode($q);
         // $url = 'https://maps.googleapis.com/maps/api/autocomplete/json?input='.$q.'&types=geocode&language=fr&sensor=false&key='.$this->apiKey;
-        $url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?input=Vict&sensor=true&key=".$this->apiKey;
+        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=".$q."&sensor=false";
         $content = $this->getJson($url);
 
-die(var_dump($content));
-        return $content['results'];
+        $autocomplete = [];
+        foreach ($content['results'] as $address) {
+            $autocomplete[] = $address['formatted_address'];
+        }
+
+        return $autocomplete;
     }
 
     public function getJson($url, $headers = array())
     {
         $response = $this->get($url);
-die();
+
         if (!$response->isSuccessful()) {
             throw new \Exception("Failed to communicate with google maps apis");
         }

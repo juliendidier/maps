@@ -3,6 +3,7 @@
 namespace Geocoder\Provider;
 
 use Geocoder\Buzz\Browser;
+use Geocoder\Cache\Exception\NotCachedException;
 use Geocoder\Cache\Cache;
 
 class Provider
@@ -18,30 +19,37 @@ class Provider
 
     public function geocode($address)
     {
-        if ($this->cache->hasGeocode($address)) {
-            return $this->cache->getGeocode($address);
+        try {
+            $geocode = $this->cache->getGeocode($address);
+        } catch (NotCachedException $e) {
+            $geocode = $this->browser->getGeocode($address);
+            $this->cache->setGeocode($address, $geocode);
         }
-
-        $geocode = $this->browser->getGeocode($address);
-        $this->cache->setGeocode($address, $geocode);
 
         return $geocode;
     }
 
     public function reverse($latitude, $longitude)
     {
-        // if ($this->cache->hasReverse($latitude, $longitude)) {
-        //     return $this->cache->getReverse($latitude, $longitude);
-        // }
-
-        $reverse = $this->browser->getReverse($latitude, $longitude);
-        $this->cache->setReverse($latitude, $longitude, $reverse);
+        try {
+            $reverse = $this->cache->getReverse($latitude, $longitude);
+        } catch (NotCachedException $e) {
+            $reverse = $this->browser->getReverse($latitude, $longitude);
+            $this->cache->setReverse($latitude, $longitude, $reverse);
+        }
 
         return $reverse;
     }
 
     public function search($q)
     {
-        return $this->browser->getSearch($q);
+        // try {
+        //     $search = $this->cache->getSearch($q);
+        // } catch (NotCachedException $e) {
+            $search = $this->browser->getSearch($q);
+            $this->cache->setSearch($q, $search);
+        // }
+
+        return $search;
     }
 }
