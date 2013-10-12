@@ -58,7 +58,11 @@ class Browser extends BuzzBrowser
 
         $autocomplete = [];
         foreach ($content['results'] as $address) {
-            $autocomplete[] = $address['formatted_address'];
+            $autocomplete[]['address'] = $address['formatted_address'];
+            $autocomplete[]['location'] = [
+                'latitude' => $address['geometry']['location']['lat'],
+                'longitude' => $address['geometry']['location']['lng'],
+            ];
         }
 
         return $autocomplete;
