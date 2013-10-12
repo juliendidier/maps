@@ -44,12 +44,12 @@ class Provider
     public function search($q)
     {
         $search = [];
-        // try {
-            // $search['results'] = $this->cache->getSearch($q);
-        // } catch (NotCachedException $e) {
+        try {
+            $search['results'] = $this->cache->getSearch($q);
+        } catch (NotCachedException $e) {
             $search['results'] = $this->browser->getSearch($q);
-            // $this->cache->setSearch($q, $search);
-        // }
+            $this->cache->setSearch($q, $search);
+        }
 
         return $search;
     }
