@@ -43,10 +43,11 @@ class Provider
 
     public function search($q)
     {
+        $search = [];
         try {
-            $search = $this->cache->getSearch($q);
+            $search['results'] = $this->cache->getSearch($q);
         } catch (NotCachedException $e) {
-            $search = $this->browser->getSearch($q);
+            $search['results'] = $this->browser->getSearch($q);
             $this->cache->setSearch($q, $search);
         }
 
