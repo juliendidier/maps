@@ -19,26 +19,7 @@ class Browser extends BuzzBrowser
         $url = 'https://maps.googleapis.com/maps/api/geocode/json?language=fr&address='.$address.'&sensor=false';
         $content = $this->getJson($url);
 
-        $result = array(
-            'location'  => $content['results'][0]['geometry']['location'],
-            'accuracy'  => $content['results'][0]['geometry']['location_type'],
-            'addresses' => $content['results'][0]['address_components'],
-            'address'   => array(),
-        );
-
-        if (count($content['results'][0]['address_components']) > 0) {
-            foreach ($content['results'][0]['address_components'] as $addressNode) {
-                foreach ($addressNode['types'] as $nodeType) {
-                    if ($nodeType === 'political') {
-                        continue;
-                    }
-
-                    $result['address'][$nodeType] = $addressNode['long_name'];
-                }
-            }
-        }
-
-        return $result;
+        return $this->proccessContent($content);
     }
 
     public function getReverse($latitude, $longitude)
@@ -46,7 +27,7 @@ class Browser extends BuzzBrowser
         $url = 'https://maps.googleapis.com/maps/api/geocode/json?language=fr&latlng='.$latitude.','.$longitude.'&sensor=false';
         $content = $this->getJson($url);
 
-        return $content['results'];
+        return $this->processContent($content);
     }
 
     public function getSearch($q)
@@ -72,7 +53,7 @@ class Browser extends BuzzBrowser
         return $autocomplete;
     }
 
-    public function getJson($url, $headers = array())
+    protected function getJson($url, $headers = array())
     {
         $response = $this->get($url);
 
@@ -85,5 +66,29 @@ class Browser extends BuzzBrowser
         }
 
         return json_decode($response->getContent(), true);
+    }
+
+    protected function processContent(array $content)
+    {
+        $result = array(
+            'location'  => $content['results'][0]['geometry']['location'],
+            'accuracy'  => $content['results'][0]['geometry']['location_type'],
+            'addresses' => $content['results'][0]['address_components'],
+            'address'   => array(),
+        );
+
+        if (count($content['results'][0]['address_components']) > 0) {
+            foreach ($content['results'][0]['address_components'] as $addressNode) {
+                foreach ($addressNode['types'] as $nodeType) {
+                    if ($nodeType === 'political') {
+                        continue;
+                    }
+
+                    $result['address'][$nodeType] = $addressNode['long_name'];
+                }
+            }
+        }
+
+        return $result;
     }
 }
