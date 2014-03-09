@@ -19,7 +19,7 @@ class Browser extends BuzzBrowser
         $url = 'https://maps.googleapis.com/maps/api/geocode/json?language=fr&address='.$address.'&sensor=false';
         $content = $this->getJson($url);
 
-        return $this->proccessContent($content);
+        return $this->processContent($content);
     }
 
     public function getReverse($latitude, $longitude)
@@ -61,6 +61,7 @@ class Browser extends BuzzBrowser
             throw new \Exception("Failed to communicate with google maps apis");
         }
 
+        $content = json_decode($response->getContent(), true);
         if (array_key_exists('status', $content) && $content['status'] === 'REQUEST_DENIED') {
             throw new \Exception(sprintf('Google maps apis says %s', $content['status']));
         }
@@ -76,7 +77,6 @@ class Browser extends BuzzBrowser
             'addresses' => $content['results'][0]['address_components'],
             'address'   => array(),
         );
-
         if (count($content['results'][0]['address_components']) > 0) {
             foreach ($content['results'][0]['address_components'] as $addressNode) {
                 foreach ($addressNode['types'] as $nodeType) {
